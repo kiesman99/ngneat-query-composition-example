@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { QueryClientService, UseQuery } from '@ngneat/query';
+import { UseQuery } from '@ngneat/query';
 import { UserService } from '../services/user.service';
 
 @Injectable({
@@ -9,8 +9,8 @@ export class UserQueryService {
   private userService = inject(UserService);
   private useQuery = inject(UseQuery);
 
-  getCurrentUser() {
-    return this.useQuery(['user'], () => {
+  getCurrentUser(userId: string) {
+    return this.useQuery(['user', userId], () => {
       return this.userService.getCurrentUser();
     });
   }

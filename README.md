@@ -1,3 +1,1 @@
-# ngneat-query-composition-example
-
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/angular-ivy-vvqtpk)
+This is a very small example to showcase query compositions.

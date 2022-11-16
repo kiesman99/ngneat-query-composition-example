@@ -15,7 +15,7 @@ export class UserPageComponent {
   private userQueryService = inject(UserQueryService);
   private permissionQueryService = inject(PermissionQueryService);
 
-  user$ = this.userQueryService.getCurrentUser().result$;
+  user$ = this.userQueryService.getCurrentUser('my-id').result$;
 
   permissions$ = this.permissionQueryService.getAllPermissions().result$;
 
