@@ -1,6 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { filterSuccess, QueryClientService, UseQuery } from '@ngneat/query';
-import { map, switchMap } from 'rxjs';
+import {
+  combineLatest,
+  filter,
+  map,
+  skipWhile,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
+import { combineLatestWith } from 'rxjs/operators';
 import { Permission } from '../models/permission.model';
 import { PermissionService } from '../services/permission.service';
 import { UserService } from '../services/user.service';
@@ -66,6 +75,50 @@ export class PermissionQueryService {
             )
           );
       },
+    });
+  }
+
+  // does currently not work. Do not inspect this one :D
+  permissionsOfUser4(userId: string) {
+    return this.useQuery(['permissions-of-user', 3, userId], () => {
+      return this.userQueryService.getCurrentUser(userId).result$.pipe(
+        combineLatestWith(this.getAllPermissions().result$),
+        tap(console.log),
+        map(([userQuery, permissionsQuery]) => {
+          const isLoading = userQuery.isLoading || permissionsQuery.isLoading;
+          const isError = userQuery.isError || permissionsQuery.isError;
+          const isFetched = userQuery.isFetched && permissionsQuery.isFetched;
+
+          return {
+            isLoading,
+            isError,
+            isFetched,
+            data: !isFetched
+              ? undefined
+              : this.resolvePermissions(
+                  permissionsQuery.data,
+                  userQuery.data.permissionIds
+                ),
+          };
+        })
+      );
+      return combineLatest({
+        userQuery: this.userQueryService.getCurrentUser(userId).result$,
+        permissionsQuery: this.getAllPermissions().result$,
+      }).pipe(
+        tap(console.log),
+        map(({ userQuery, permissionsQuery }) => {
+          return {
+            isLoading: userQuery.isLoading || permissionsQuery.isLoading,
+            isError: userQuery.isError || permissionsQuery.isError,
+            isFetched: userQuery.isFetched && permissionsQuery.isFetched,
+            data: this.resolvePermissions(
+              permissionsQuery.data,
+              userQuery.data.permissionIds
+            ),
+          };
+        })
+      );
     });
   }
 

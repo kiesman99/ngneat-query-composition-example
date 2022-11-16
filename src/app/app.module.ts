@@ -8,6 +8,7 @@ import { AllPermissionsPageComponent } from './pages/all-permissions-page/all-pe
 import { RouterModule, Routes } from '@angular/router';
 import { UserTwoPageComponent } from './pages/user-two-page/user-two-page.component';
 import { UserThreePageComponent } from './pages/user-three-page/user-three-page.component';
+import { UserFourPageComponent } from './pages/user-four-page/user-four-page.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,10 @@ const routes: Routes = [
   {
     path: 'user3',
     component: UserThreePageComponent,
+  },
+  {
+    path: 'user4',
+    component: UserFourPageComponent,
   },
 ];
 

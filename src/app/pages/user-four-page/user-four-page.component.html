@@ -1,0 +1,21 @@
+<ng-container *subscribe="user$ as user">
+  <h1>User Detail</h1>
+  <h2>Infos</h2>
+  <p *ngIf="user.isLoading">Loading...</p>
+  <div *ngIf="user.isFetched">
+    <span><b>Username:</b> {{ user.data.username }}</span>
+  </div>
+
+  <ng-container *subscribe="userPermissions$ as permissions">
+    <h2>Permissions</h2>
+    <p *ngIf="permissions.isLoading">Loading....</p>
+    <ul *ngIf="permissions.isFetched">
+      {{
+        permissions.data | json
+      }}
+      <!-- <li *ngFor="let permission of permissions.data">
+        {{ permission | json }}
+      </li> -->
+    </ul>
+  </ng-container>
+</ng-container>
