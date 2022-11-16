@@ -1,0 +1,18 @@
+<h1>User Detail</h1>
+
+<ng-container *subscribe="user$ as user">
+  <h2>Info</h2>
+  <p *ngIf="user.isLoading">Loading...</p>
+  <span *ngIf="user.isFetched"><b>Username:</b> {{ user.data.username }}</span>
+</ng-container>
+
+<h2>Permissions</h2>
+<p>No query.isLoading or query.isError available</p>
+
+<ng-container *subscribe="permissions$ as permissions">
+  <p *ngIf="!permissions">Pseudo Loading...</p>
+
+  <ul>
+    <li *ngFor="let perm of permissions">{{ perm.name }}</li>
+  </ul>
+</ng-container>

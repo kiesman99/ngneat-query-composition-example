@@ -3,6 +3,7 @@ import { filterSuccess, QueryClientService, UseQuery } from '@ngneat/query';
 import { map, switchMap } from 'rxjs';
 import { Permission } from '../models/permission.model';
 import { PermissionService } from '../services/permission.service';
+import { UserService } from '../services/user.service';
 import { UserQueryService } from './user-query.service';
 
 @Injectable({
@@ -10,6 +11,7 @@ import { UserQueryService } from './user-query.service';
 })
 export class PermissionQueryService {
   private permissionService = inject(PermissionService);
+  private userService = inject(UserService);
   private useQuery = inject(UseQuery);
 
   private userQueryService = inject(UserQueryService);
@@ -21,7 +23,7 @@ export class PermissionQueryService {
   }
 
   // no isLoading, isError available
-  permissionsOfUser(userId: string) {
+  permissionsOfUser1(userId: string) {
     return this.userQueryService.getCurrentUser(userId).result$.pipe(
       filterSuccess(),
       map((query) => query.data),
@@ -44,4 +46,36 @@ export class PermissionQueryService {
     );
   }
 
+  // duplicate all permissions and current user in store
+  // make use of UserService in PermissionQueryService
+  permissionsOfUser2(userId: string) {
+    return this.useQuery({
+      queryKey: ['permissions-of-user', userId],
+      queryFn: () => {
+        return this.permissionService
+          .loadAllPermissions()
+          .pipe(
+            switchMap((permissions) =>
+              this.userService
+                .getCurrentUser()
+                .pipe(
+                  map((user) =>
+                    this.resolvePermissions(permissions, user.permissionIds)
+                  )
+                )
+            )
+          );
+      },
+    });
+  }
+
+  private resolvePermissions(
+    permissions?: Permission[],
+    ids?: string[]
+  ): Permission[] {
+    if (!permissions || !ids) {
+      return [];
+    }
+    return ids.map((id) => permissions.find((perm) => perm.id === id));
+  }
 }
