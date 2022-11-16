@@ -1,0 +1,10 @@
+<ng-container *subscribe="permissions$ as permissions">
+  <h1>All available permissions</h1>
+
+  <p *ngIf="permissions.isLoading">Loading...</p>
+  <ul *ngIf="permissions.isFetched">
+    <li *ngFor="let permission of permissions.data">
+      {{ permission.name }}
+    </li>
+  </ul>
+</ng-container>
